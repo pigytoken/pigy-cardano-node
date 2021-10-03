@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  cardano-node:
+    build:
+      context: .
+    container_name: cardano-node-1.30.1
+    image: cardano-node:v1.30.1
+    deploy:
+      resources:
+        limits:
+          memory: 8000M
+    stdin_open: true
+    tty: true
+    environment:
+      - NETWORK=testnet
+      - CARDANO_NODE_SOCKET_PATH=/db/node.socket
+    volumes:
+      - node-db:/db
+      - ./data:/opt/data
+    entrypoint: [
+        'bash',
+        '-c',
+        "sleep 10 && cardano-node run \
+        --topology /etc/config/testnet-topology.json \
+        --database-path /db \
+        --socket-path /db/node.socket \
+        --host-addr 0.0.0.0 \
+        --port 3001 \
+        --config /etc/config/testnet-config.json",
+      ]
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '50M'
+        max-file: '10'
+
+volumes:
+  node-db:
