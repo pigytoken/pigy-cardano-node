@@ -121,8 +121,7 @@ Adjust the following settings for the mainnet or for the testnet:
   entrypoint: [
     
     --topology /etc/config/testnet-topology.json \ # testnet-topology.json or mainnet-topology.json
-	
-	--config /etc/config/testnet-config.json" # testnet-config.json or mainnet-config.json
+    --config /etc/config/testnet-config.json" # testnet-config.json or mainnet-config.json
 ```
 
 Speichere nun die Datei ab. Strg + x
