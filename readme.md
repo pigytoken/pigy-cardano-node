@@ -116,12 +116,12 @@ Adjust the following settings for the mainnet or for the testnet:
 
 ```yaml
   environment:
-	- NETWORK=testnet #testnet or mainnet
+    - NETWORK=testnet #testnet or mainnet
 
   entrypoint: [
-	...
-	--topology /etc/config/testnet-topology.json \ # testnet-topology.json or mainnet-topology.json
-	...
+    
+    --topology /etc/config/testnet-topology.json \ # testnet-topology.json or mainnet-topology.json
+	
 	--config /etc/config/testnet-config.json" # testnet-config.json or mainnet-config.json
 ```
 
