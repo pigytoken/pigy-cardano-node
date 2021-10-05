@@ -124,7 +124,7 @@ Adjust the following settings for the mainnet or for the testnet:
     --config /etc/config/testnet-config.json" # testnet-config.json or mainnet-config.json
 ```
 
-Speichere nun die Datei ab. Strg + x
+Now save the file. Ctrl + x
 
 ### Start project
 
