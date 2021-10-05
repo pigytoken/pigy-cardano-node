@@ -1,14 +1,14 @@
 FROM ubuntu:20.04 as builder
 LABEL Maintainer="PIGYToken <support@pigytoken.com>" \
     Description="Cardano-node" \
-    version="1.30.1"
+    version="1.0.0"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update \
     && apt-get upgrade -y \
     && apt-get install -y automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev \
-    zlib1g-dev make g++ tmux git jq curl libncursesw5 libtool autoconf llvm libnuma-dev nano htop  bc rsync
+    zlib1g-dev make g++ tmux git jq curl libncursesw5 libtool autoconf llvm libnuma-dev
 
 # GHC install
 WORKDIR /build/ghc
@@ -44,7 +44,7 @@ FROM ubuntu:20.04
 
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends netbase jq libnuma-dev curl && \
+    apt-get install -y --no-install-recommends netbase jq libnuma-dev curl nano htop bc rsync && \
     rm -rf /var/lib/apt/lists/*
 
 # Libsodium

@@ -16,7 +16,7 @@ services:
       - NETWORK=testnet
       - CARDANO_NODE_SOCKET_PATH=/db/node.socket
     volumes:
-      - node-db:/db
+      - ./node-db:/db
       - ./data:/opt/data
     entrypoint: [
         'bash',
@@ -29,11 +29,10 @@ services:
         --port 3001 \
         --config /etc/config/testnet-config.json",
       ]
+    ports:
+      - '3001:3001'
     logging:
       driver: 'json-file'
       options:
         max-size: '50M'
-        max-file: '10'
-
-volumes:
-  node-db:
+        max-file: '5'
