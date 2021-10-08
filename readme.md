@@ -187,9 +187,13 @@ How-to create a Ubuntu USB Stick:
 
 https://www.howtogeek.com/howto/14912/create-a-persistent-bootable-ubuntu-usb-flash-drive/
 
+On Windows you can create a Ubuntu USB-Stick with the newest Rufus Version inkl. Persistent Storage.
+
 **Copy cardano-cli binarys**
 
 Copy your "cardano-cli" Binarys to a USB Stick:
+
+Under WSL you must mount your USB Stick before.
 
 ```bash
 docker cp cardano-node-1.30.1:/usr/local/bin/cardano-cli /<PATH_TO_YOUR_USBSTICK-FOLDER>
@@ -199,18 +203,23 @@ Create a folder for your cardano-cli on your air gapped machine and make it know
 
 ```bash
 echo export NODE_HOME=$HOME/cardano-cli >> $HOME/.bashrc
+source $HOME/.bashrc
+
 echo PATH="$NODE_HOME:$PATH" >> $HOME/.bashrc
 source $HOME/.bashrc
+
 mkdir -p $NODE_HOME
 mkdir -p $HOME/keys
 ```
 
-Now copy the "cardano-cli" binary file into the folder you just created:
+You can check with `echo $NODE_HOME` if the folder env is set. If is empty output, something was wrong.
+
+Now copy the "cardano-cli" binary file into the folder you just created and make it executable:
 
 ```bash
-cp <PATH_TO_USB_STICK>/cardano-cli $NODE_HOME/cardano-cli/
+sudo cp <PATH_TO_USB_STICK>/cardano-cli $NODE_HOME
 
-chmod +x cardano-cli
+sudo chmod +x $NODE_HOME/cardano-cli
 ```
 
 Check if your system finds the cardano-cli:
@@ -222,6 +231,8 @@ cardano-cli --version
 cardano-cli 1.30.1 - linux-x86_64 - ghc-8.10
 git rev 0fb43f4e3da8b225f4f86557aed90a183981a64f
 ```
+
+You are now ready for signing transaction in a secure offline way :)
 
 ## Make a simple transaction
 
