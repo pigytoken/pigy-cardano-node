@@ -187,9 +187,13 @@ How-to create a Ubuntu USB Stick:
 
 https://www.howtogeek.com/howto/14912/create-a-persistent-bootable-ubuntu-usb-flash-drive/
 
+On Windows you can create a Ubuntu USB-Stick with the newest Rufus Version inkl. Persistent Storage.
+
 **Copy cardano-cli binarys**
 
 Copy your "cardano-cli" Binarys to a USB Stick:
+
+Under WSL you must mount your USB Stick before.
 
 ```bash
 docker cp cardano-node-1.30.1:/usr/local/bin/cardano-cli /<PATH_TO_YOUR_USBSTICK-FOLDER>
@@ -199,8 +203,11 @@ Create a folder for your cardano-cli on your air gapped machine and make it know
 
 ```bash
 echo export NODE_HOME=$HOME/cardano-cli >> $HOME/.bashrc
+source $HOME/.bashrc
+
 echo PATH="$NODE_HOME:$PATH" >> $HOME/.bashrc
 source $HOME/.bashrc
+
 mkdir -p $NODE_HOME
 mkdir -p $HOME/keys
 ```
@@ -208,9 +215,9 @@ mkdir -p $HOME/keys
 Now copy the "cardano-cli" binary file into the folder you just created:
 
 ```bash
-cp <PATH_TO_USB_STICK>/cardano-cli $NODE_HOME/cardano-cli/
+sudo cp <PATH_TO_USB_STICK>/cardano-cli $NODE_HOME/cardano-cli/
 
-chmod +x cardano-cli
+sudo chmod +x cardano-cli
 ```
 
 Check if your system finds the cardano-cli:
