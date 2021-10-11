@@ -1,7 +1,7 @@
 FROM ubuntu:20.04 as builder
 LABEL Maintainer="PIGYToken <support@pigytoken.com>" \
     Description="Cardano-node" \
-    version="1.0.0"
+    version="1.1.0"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -33,12 +33,18 @@ RUN curl -L https://downloads.haskell.org/~cabal/cabal-install-3.4.0.0/cabal-ins
     tar -Jx -C /usr/bin/
 RUN cabal update
 
-# Cardano source
+# Building Cardano-node
 WORKDIR /build/cardano-node
 RUN git clone --branch 1.30.1 https://github.com/input-output-hk/cardano-node.git && \
     cd cardano-node && \
     cabal configure --with-compiler=ghc-8.10.4 && \
     cabal build all
+
+# Building Mantra-tools
+WORKDIR /build/mantis
+RUN git clone https://github.com/functionally/mantis.git && \
+    cd mantis && \
+    cabal install
 
 FROM ubuntu:20.04
 
@@ -58,5 +64,6 @@ COPY config/testnet /etc/config
 
 COPY --from=builder /build/cardano-node/cardano-node/dist-newstyle/build/x86_64-linux/ghc-8.10.4/cardano-node-1.30.1/x/cardano-node/build/cardano-node/cardano-node /usr/local/bin/
 COPY --from=builder /build/cardano-node/cardano-node/dist-newstyle/build/x86_64-linux/ghc-8.10.4/cardano-cli-1.30.1/x/cardano-cli/build/cardano-cli/cardano-cli /usr/local/bin/
+COPY --from=builder /root/.cabal/bin/mantra /usr/local/bin/
 
 ENTRYPOINT ["bash", "-c"]
