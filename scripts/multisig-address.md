@@ -18,11 +18,11 @@ So we will choose Type "atLeast" as script type.
 
 We assume that you sign your transactions with an air-gapped offline machine.
 
-[Generate Key hashes and scripts](#Generate Key hashes and scripts)
+[Generate Key hashes and scripts](#Generate-Key-hashes-and-scripts)
 
-[Create a Multi Signature Transaction](#Now we create a Multi Signature Transaction)
+[Create a Multi Signature Transaction](#Now-we-create-a-Multi-Signature-Transaction)
 
-[Witnessing and Signing the Transaction](Witnessing and Signing the Transaction)
+[Witnessing and Signing the Transaction](#Witnessing-and-Signing-the-Transaction)
 
 ## Generate Key hashes and scripts
 
