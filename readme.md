@@ -1,6 +1,6 @@
-# Super Simple Cardano-Node with Docker
+# Cardano-Node with Docker
 
-You will find here a simple Cardano-Node setup without bells and whistles.
+You will find here a simple Cardano-Node setup without bells and whistles. Its a Docker Multi-Stage Build.
 
 **System requirements:**
 
@@ -19,6 +19,20 @@ How-to [Windows](https://docs.docker.com/desktop/windows/install/) we recommende
 How-to [Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04)
 *Under Windows the docker-compose is integrated in the Docker Installation.*
 
+[Start](#How-to-start)
+
+[Download source and checkout branch](#Download-source-and-checkout-branch)
+
+[Customize docker-compose](#Customize-docker-compose)
+
+[Build project](#Build-project)
+
+[How to setup air-gapped-machine](#How-to-setup-air-gapped-machine)
+
+[Make a simple transaction](#Make-a-simple-transaction)
+
+[Update Project](#Update-Project)
+
 ## How-to start
 
 Once you have prepared your Docker environment, we can now customize our Docker project.
@@ -30,7 +44,7 @@ There are two ways to operate the node:
 
 Let's assume we want to run the node on the Tesnet. Except for a few changes, the process is always the same.
 
-### Source download and checkout select
+### Create Docker User 
 
 First we create the user `dockeruser` with the home folder  `srv/docker` 
 
@@ -55,6 +69,8 @@ Now create a folder under `/srv/docker`
 ```bash
 mkdir -p cardano-node-<VERSION>
 ```
+
+### Download source and checkout branch
 
 Go to the folder and clone the project:
 
@@ -126,7 +142,7 @@ Adjust the following settings for the mainnet or for the testnet:
 
 Now save the file. Ctrl + x
 
-### Start project
+### Build project
 
 To build and start the Docker container you have to execute the following command:
 
@@ -147,7 +163,7 @@ CONTAINER ID   IMAGE                  COMMAND                  CREATED        ST
 If you want to see the log you can do this with the following command:
 
 ```bash
-docker-compose logs -f (-f for tail)
+docker-compose logs -f # (-f for tail)
 ```
 
 If you want to know now what is the sync status of your node you can execute the following command:
@@ -189,7 +205,7 @@ https://www.howtogeek.com/howto/14912/create-a-persistent-bootable-ubuntu-usb-fl
 
 On Windows you can create a Ubuntu USB-Stick with the newest Rufus Version inkl. Persistent Storage.
 
-**Copy cardano-cli binarys**
+**Copy cardano-cli and mantra-tools binarys**
 
 Copy your "cardano-cli" Binarys to a USB Stick:
 
@@ -197,39 +213,58 @@ Under WSL you must mount your USB Stick before.
 
 ```bash
 docker cp cardano-node-1.30.1:/usr/local/bin/cardano-cli /<PATH_TO_YOUR_USBSTICK-FOLDER>
+docker cp cardano-node-1.30.1:/usr/local/bin/mantra /<PATH_TO_YOUR_USBSTICK-FOLDER>
 ```
 
-Create a folder for your cardano-cli on your air gapped machine and make it known to the system
+Create a folder for the cardano-cli and the mantra-tools on your air gapped machine and make it known to the system:
 
 ```bash
+# On Air-gapped
 echo export NODE_HOME=$HOME/cardano-cli >> $HOME/.bashrc
+source $HOME/.bashrc
+
+echo export MANTRA_HOME=$HOME/mantra >> $HOME/.bashrc
 source $HOME/.bashrc
 
 echo PATH="$NODE_HOME:$PATH" >> $HOME/.bashrc
 source $HOME/.bashrc
 
+echo PATH="$MANTRA_HOME:$PATH" >> $HOME/.bashrc
+source $HOME/.bashrc
+
 mkdir -p $NODE_HOME
+mkdir -p $MANTRA_HOME
 mkdir -p $HOME/keys
 ```
 
 You can check with `echo $NODE_HOME` if the folder env is set. If is empty output, something was wrong.
 
-Now copy the "cardano-cli" binary file into the folder you just created and make it executable:
+Now copy the binaries "cardano-cli" & "mantra" into the folders you just created and make them executable:
 
 ```bash
+# On Air-gapped
 sudo cp <PATH_TO_USB_STICK>/cardano-cli $NODE_HOME
+sudo cp <PATH_TO_USB_STICK>/mantra $MANTRA_HOME
 
 sudo chmod +x $NODE_HOME/cardano-cli
+sudo chmod +x $MANTRA_HOME/cardano-cli
 ```
 
-Check if your system finds the cardano-cli:
+Check if your system finds the cardano-cli & mantra tools:
 
 ```bash
+# On Air-gapped
+
 cardano-cli --version
 
 # output
 cardano-cli 1.30.1 - linux-x86_64 - ghc-8.10
 git rev 0fb43f4e3da8b225f4f86557aed90a183981a64f
+
+mantra --version
+
+# Output
+Mantra 0.5.1.2, (c) 2021 Brian W Bush <code@functionally.io>
 ```
 
 You are now ready for signing transaction in a secure offline way :)
@@ -272,18 +307,21 @@ cardano-cli address build \
 **Copy your `payment.addr` to your hot environment**.
 
 ```bash
+# On Host
 docker cp <PATH_TO_FOLDER>payment.addr cardano-node-1.30.1:/opt/data
 ```
 
 Now we continue working in the container. To do this, we log in to it:
 
 ```bash
+# On Host
 docker exec -it cardano-node-1.30.1 bash
 ```
 
 You can display your payment address with cat:
 
 ```bash
+# On Hot environment
 cd /opt/data/
 echo "$(cat payment.addr)"
 ```
@@ -297,6 +335,7 @@ https://testnets.cardano.org/en/testnets/cardano/tools/faucet/
 Do you want to look at your balance:
 
 ```bash
+# On Hot environment
 cardano-cli query utxo \
     --address $(cat payment.addr) \
     --testnet-magic 1097911063
@@ -307,11 +346,12 @@ cardano-cli query utxo \
 a17d4cdadbb8cc35b6914a9dce40ac849830552e38dfe19d4f9951656a9ef86a     0        100000000 lovelace + TxOutDatumHashNone
 ```
 
-1 ADA = 1.000.000 Lovelaces.
+1 ADA = 1.000.000 Lovelace.
 
 Now create a new protocol parameter file:
 
 ```bash
+# On Hot environment
 cardano-cli query protocol-parameters \
     --testnet-magic 1097911063 \
     --out-file params.json
@@ -320,6 +360,7 @@ cardano-cli query protocol-parameters \
 Find the "tip" of the blockchain now so we can set the "invalid-hereafter" properly:
 
 ```bash
+# On Hot environment
 currentSlot=$(cardano-cli query tip --testnet-magic 1097911063 | jq -r '.slot')
 echo Current Slot: $currentSlot
 
@@ -330,6 +371,7 @@ Current Slot: 39095374
 We would now like to send 20 tADA to one address:
 
 ```bash
+# On Hot environment
 amountToSend=20000000
 echo amountToSend: $amountToSend
 
@@ -340,6 +382,7 @@ echo amountToSend: $amountToSend
 Now set the destination address:
 
 ```bash
+# On Hot environment
 destinationAddress=addr_test1qzr8qgh6x5ml3y7u52eph2t5m2pumfpxsduz7q26ghe9zap2ucalwdqpj8ylgr6cvyqkttpz0r04flj76u3h694ct76sm8zdgk
 echo destinationAddress: $destinationAddress
 ```
@@ -347,6 +390,7 @@ echo destinationAddress: $destinationAddress
 Now we look for the UTXOs and the balance:
 
 ```bash
+# On Hot environment
 cardano-cli query utxo \
     --address $(cat payment.addr) \
     --testnet-magic 1097911063 > fullUtxo.out
@@ -380,6 +424,7 @@ Number of UTXOs: 1
 Now we execute the "build-raw" command:
 
 ```bash
+# On Hot environment
 cardano-cli transaction build-raw \
     ${tx_in} \
     --tx-out $(cat payment.addr)+0 \
@@ -392,6 +437,7 @@ cardano-cli transaction build-raw \
 Now we calculate the transaction fees:
 
 ```bash
+# On Hot environment
 fee=$(cardano-cli transaction calculate-min-fee \
     --tx-body-file tx.tmp \
     --tx-in-count ${txcnt} \
@@ -409,6 +455,7 @@ fee: 175665
 We calculate the change output:
 
 ```bash
+# On Hot environment
 txOut=$((${total_balance}-${fee}-${amountToSend}))
 echo Change Output: ${txOut}
 
@@ -419,6 +466,7 @@ Change Output: 79824335
 Now we create the transaction:
 
 ```bash
+# On Hot environment
 cardano-cli transaction build-raw \
     ${tx_in} \
     --tx-out $(cat payment.addr)+${txOut} \
@@ -437,6 +485,7 @@ exit
 **Copy the "tx.raw" file to your air-gapped machine**.
 
 ```bash
+# On Host
 docker cp cardano-node-1.30.1:/opt/data/tx.raw /<PATH_TO_YOUR_USBSTICK-FOLDER>
 ```
 
@@ -457,12 +506,14 @@ cardano-cli transaction sign \
 **Now copy the "tx.signed" file to your hot environment:
 
 ```bash
+# On Host
 docker cp <PATH_TO_FOLDER>/tx.signed cardano-node-1.30.1:/opt/data
 ```
 
 Now you can send your signed transaction:
 
 ```bash
+# On Hot environment
 cardano-cli transaction submit \
     --tx-file tx.signed \
     --testnet-magic 1097911063
@@ -474,6 +525,7 @@ Transaction successfully submitted.
 You can now see if the transaction has arrived:
 
 ```bash
+# On Hot environment
 cardano-cli query utxo \
     --address addr_test1qzr8qgh6x5ml3y7u52eph2t5m2pumfpxsduz7q26ghe9zap2ucalwdqpj8ylgr6cvyqkttpz0r04flj76u3h694ct76sm8zdgk \
     --testnet-magic 1097911063
@@ -488,4 +540,48 @@ Looks good!
 
 *Remember, whenever you go out of your container, it forgets the variables such as "${destinationAddress}".*
 
-*A big thanks goes also to [CoinCashew](https://www.coincashew.com/coins/overview-ada/guide-how-to-build-a-haskell-stakepool-node#18-9-send-a-simple-transaction-example) for the great contribution. The path of the transaction was created using his tutorial. Feel free to leave him a donation!*
+## Update Project
+
+Shutdown the Container, go to the folder where your "docker-compose" file is located:
+
+```bash
+docker-compose down
+```
+
+Update project files:
+
+```bash
+git pull
+```
+
+Check if you are in the correct branch:
+
+```bash
+git branch -a
+
+# sitch branch with "git checkout <BRANCHE_NAME>"
+```
+
+Now re-build the Image:
+
+```bash
+docker-compose build --no-cache
+```
+
+Now you can start up the container again:
+
+```bash
+docker-compose up -d
+```
+
+| NOTICE: | Dont forget to update your cardano-cli and mantra-tools on air-gapped machine. |
+| ------- | ------------------------------------------------------------ |
+
+
+
+*Credits goes to:*
+
+*[CoinCashew](https://www.coincashew.com/coins/overview-ada/guide-how-to-build-a-haskell-stakepool-node#18-9-send-a-simple-transaction-example) for the great article. The path of the transaction was created using his tutorial. Feel free to leave him a donation!*
+
+*[Functionally](https://github.com/functionally/mantis) for his create Mantra-tools. Give him a star :-)*
+
