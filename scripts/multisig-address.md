@@ -1,3 +1,7 @@
+
+
+
+
 # How-to create multi-signature scripts on cardano
 
 **Multi signature scripts can help us to secure certain addresses by different individuals.**
@@ -13,6 +17,12 @@ In our example there are 3 persons (Bob, Alice and John) of which at least 2 per
 So we will choose Type "atLeast" as script type.
 
 We assume that you sign your transactions with an air-gapped offline machine.
+
+[Generate Key hashes and scripts](#Generate Key hashes and scripts)
+[Create a Multi Signature Transaction](#Now we create a Multi Signature Transaction)
+[Witnessing and Signing the Transaction](Witnessing and Signing the Transaction)
+
+## Generate Key hashes and scripts
 
 **Each of the possible signers must generate a payment key**:
 
@@ -270,6 +280,34 @@ cardano-cli transaction build-raw \
 In our example, at least 2 people need to confirm the transaction. Let's assume that Bob and John are these persons.
 
 Bob now needs to send via a secure path John the build-raw and multisig script file he just created (**multisig.raw**).
+
+We use the Mantra tools to check that we are signing the right transaction. **Credits goes to [functionally](https://github.com/functionally/mantis) for this create tool.**
+
+Now go to your Air-gapped machine and check if the transaction is correct:
+
+```bash
+# On Air-gapped Environment
+
+mantra info-txbody multisig.raw
+
+# Output
+Transaction body file: multisig.raw
+"a88a90d3d9cb950cb610cd54f0a5f4621d1e51fc41466382c17f5c88130224c5"
+ShelleyTxBody ShelleyBasedEraMary (TxBodyConstr TxBodyRaw {inputs = fromList [TxInCompact (TxId {_unTxId = SafeHash "279c472d1b84b3be214e44bd6b79a3ce2c19c4d8c5c133148a1465ff54ddb774"}) 0], outputs = StrictSeq {fromStrict = fromList [(Addr Testnet (ScriptHashObj (ScriptHash "0082d29e38fa9e18e9977875a55aa808cd7b8fbc0f26debdbcf8d9cf")) StakeRefNull,Value 12819847 (fromList [])),(Addr Testnet (KeyHashObj (KeyHash "dfdd069ac45668e6652774898ab6e3ee3f97dcc8479a97f92ea83c45")) (StakeRefBase (KeyHashObj (KeyHash "2ae63bf7340191c9f40f58610165ac2278df54fe5ed7237d16b85fb5"))),Value 7000000 (fromList []))]}, certs = StrictSeq {fromStrict = fromList []}, wdrls = Wdrl {unWdrl = fromList []}, txfee = Coin 180153, vldt = ValidityInterval {invalidBefore = SNothing, invalidHereafter = SJust (SlotNo 39532164)}, update = SNothing, adHash = SNothing, mint = Value 0 (fromList [])}) [TimelockConstr MOfN 2 (StrictSeq {fromStrict = fromList [TimelockConstr Signature (KeyHash "ce46c3bcc5b9ef247adc5a0131a143176f1533047ead353fe65cf4c2"),TimelockConstr Signature (KeyHash "c050b1179a4c2919463b9631b30276928564fb614c8f59e6da39d00b"),TimelockConstr Signature (KeyHash "db867d177470b2887b8560245a09ec1837dfa6fdd6a289a926dcd890")]})] TxBodyNoScriptData Nothing TxScriptValidityNone
+```
+
+The first ID is the Transactions ID and one of the "Value" is the quantity we are sending.
+
+```bash
+mantra info-txbody multisig.raw | grep -oP 'Value\D\d+'
+
+# Output
+Value 12819847
+Value 7000000 # 7000000 / 1000000 = 7 ADA
+Value 0
+```
+
+If all is fine with multisig.raw file than sign now the transaction:
 
 ```bash
 # On Air-gapped Environment
