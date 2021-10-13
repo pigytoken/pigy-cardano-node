@@ -583,5 +583,5 @@ docker-compose up -d
 
 *[CoinCashew](https://www.coincashew.com/coins/overview-ada/guide-how-to-build-a-haskell-stakepool-node#18-9-send-a-simple-transaction-example) for the great article. The path of the transaction was created using his tutorial. Feel free to leave him a donation!*
 
-*[Functionally](https://github.com/functionally/mantis) for his create Mantra-tools. Give him a star :-)*
+*[Functionally](https://github.com/functionally/mantis) for his great Mantra-tools. Give him a star :-)*
 
