@@ -33,6 +33,8 @@ How-to [Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-in
 
 [Update Project](#Update-Project)
 
+[Troubleshooting](#Troubleshooting)
+
 ## How-to start
 
 Once you have prepared your Docker environment, we can now customize our Docker project.
@@ -577,6 +579,32 @@ docker-compose up -d
 | NOTICE: | Dont forget to update your cardano-cli and mantra-tools on air-gapped machine. |
 | ------- | ------------------------------------------------------------ |
 
+## Troubleshooting
+
+You should always shut down the containers properly.
+
+```bash
+docker-compose down
+```
+
+If you have problems with syncronization.
+
+```bash
+# Stop Container
+docker-compose down
+
+# Start Container
+docker-compose up -d
+
+# Or restart container
+docker-compose restart
+```
+
+Logs:
+
+```bash
+docker-compose logs -f
+```
 
 
 *Credits goes to:*

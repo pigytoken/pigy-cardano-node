@@ -50,7 +50,7 @@ FROM ubuntu:20.04
 
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends netbase jq libnuma-dev curl nano htop bc rsync && \
+    apt-get install -y --no-install-recommends netbase jq libnuma-dev curl nano htop bc rsync ntpdate chrony && \
     rm -rf /var/lib/apt/lists/*
 
 # Libsodium
@@ -59,11 +59,18 @@ COPY --from=builder /usr/local/lib /usr/local/lib
 ENV LD_LIBRARY_PATH="/usr/local/lib"
 ENV PKG_CONFIG_PATH="/usr/local/lib/pkgconfig"
 
+COPY config/chrony.conf /etc/chrony/chrony.conf
+
 COPY config/mainnet /etc/config
 COPY config/testnet /etc/config
 
 COPY --from=builder /build/cardano-node/cardano-node/dist-newstyle/build/x86_64-linux/ghc-8.10.4/cardano-node-1.30.1/x/cardano-node/build/cardano-node/cardano-node /usr/local/bin/
 COPY --from=builder /build/cardano-node/cardano-node/dist-newstyle/build/x86_64-linux/ghc-8.10.4/cardano-cli-1.30.1/x/cardano-cli/build/cardano-cli/cardano-cli /usr/local/bin/
 COPY --from=builder /root/.cabal/bin/mantra /usr/local/bin/
+
+EXPOSE 123/udp
+
+# start chrony daemon
+CMD [ "/usr/sbin/chronyd", "-d", "-s"]
 
 ENTRYPOINT ["bash", "-c"]
