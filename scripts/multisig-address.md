@@ -283,6 +283,13 @@ In our example, at least 2 people need to confirm the transaction. Let's assume 
 
 Bob now needs to send via a secure path John the build-raw and multisig script file he just created (**multisig.raw**).
 
+You can Copy the "multisig.raw to your Host with:
+
+```bash
+# On host
+docker cp cardano-node-1.30.1:/opt/data/multisig.raw ./<PATH_ON_YOUR_HOST>
+```
+
 We use the Mantra tools to check that we are signing the right transaction. **Credits goes to [functionally](https://github.com/functionally/mantis) for this create tool.**
 
 Now go to your Air-gapped machine and check if the transaction is correct:
@@ -330,6 +337,14 @@ cardano-cli transaction witness \
 ```
 
 John must now send his signed file "Key3_multisig.witness" to Bob.
+
+Bob muss jetzt noch die ".witness" datein in den Container laden:
+
+```bash
+# On host
+docker cp ./key1_multisig.witness cardano-node-1.30.1:/opt/data
+docker cp ./key3_multisig.witness cardano-node-1.30.1:/opt/data
+```
 
 If you use our docker project you can copy the "mutlisig.raw" file from the running container
 
