@@ -35,6 +35,8 @@ How-to [Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-in
 
 [Troubleshooting](#Troubleshooting)
 
+[How to send Native Tokens](#How-to-send-Native-Tokens)
+
 ## How-to start
 
 Once you have prepared your Docker environment, we can now customize our Docker project.
@@ -425,6 +427,8 @@ Number of UTXOs: 1
 
 Now we execute the "build-raw" command:
 
+**NOTE: If you want to send Native Tokens, please watch the different build-raw command.** **[How to send Native Tokens](#How-to-send-Native-Tokens)**
+
 ```bash
 # On Hot environment
 cardano-cli transaction build-raw \
@@ -446,7 +450,6 @@ fee=$(cardano-cli transaction calculate-min-fee \
     --tx-out-count 2 \
     --testnet-magic 1097911063 \
     --witness-count 1 \
-    --byron-witness-count 0 \
     --protocol-params-file params.json | awk '{ print $1 }')
 echo fee: $fee
 
@@ -476,6 +479,22 @@ cardano-cli transaction build-raw \
     --invalid-hereafter $(( ${currentSlot} + 10000)) \
     --fee ${fee} \
     --out-file tx.raw
+```
+
+Command description:
+
+```bash
+# first --tx-out
+The first --tx-out specifies the sender address and the amount of ADA in Lovelace from that address.
+
+# second --tx-out
+The second --tx-out specifies the recipient address and the number of ADA to send.
+
+# --invalid-hereafter
+Time that transaction is valid until (in slots). First parameter is the current slot and after + the slots in time when the transaction is expired.
+
+# --fee
+Transaction fees ;)
 ```
 
 Go back to the host:
@@ -579,6 +598,40 @@ docker-compose up -d
 | NOTICE: | Dont forget to update your cardano-cli and mantra-tools on air-gapped machine. |
 | ------- | ------------------------------------------------------------ |
 
+## How to send Native Tokens
+
+To send Native Tokens, only command `cardano-cli transaction build-raw` must be revised.
+
+```bash
+# On Hot environment
+
+cardano-cli transaction build-raw \
+    ${tx_in} \
+    --tx-out $(cat multisig.addr)+0 \
+    --tx-out ${destinationAddress}+${amountToSend}+"<AMOUNT_OF_TOKEN> <TOKEN_POLICYID>" \
+    --invalid-hereafter $(( ${currentSlot} + 10000)) \
+	--tx-in-script-file multisig.json \
+    --fee 0 \
+    --out-file tx.tmp
+```
+
+Now, as already mentioned in [Make a simple transaction](#Make-a-simple-transaction) described calculate the fees to create raw transaction.
+
+```bash
+# On Hot environment - after fee calculation
+
+cardano-cli transaction build-raw \
+    ${tx_in} \
+    --tx-out $(cat multisig.addr)+${txOut} \
+    --tx-out ${destinationAddress}+${amountToSend}+"<AMOUNT_OF_TOKEN> <TOKEN_POLICYID>" \
+    --invalid-hereafter $(( ${currentSlot} + 10000)) \
+	--tx-in-script-file multisig.json \
+    --fee ${fee} \
+    --out-file multisig.raw
+```
+
+Now confirm the transaction as usual and send it.
+
 ## Troubleshooting
 
 You should always shut down the containers properly.
@@ -612,4 +665,3 @@ docker-compose logs -f
 *[CoinCashew](https://www.coincashew.com/coins/overview-ada/guide-how-to-build-a-haskell-stakepool-node#18-9-send-a-simple-transaction-example) for the great article. The path of the transaction was created using his tutorial. Feel free to leave him a donation!*
 
 *[Functionally](https://github.com/functionally/mantis) for his great Mantra-tools. Give him a star :-)*
-
