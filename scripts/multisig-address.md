@@ -24,6 +24,8 @@ We assume that you sign your transactions with an air-gapped offline machine.
 
 [Witnessing and Signing the Transaction](#Witnessing-and-Signing-the-Transaction)
 
+[How to send Native Tokens with MultiSig](#How-to-send-Native-Tokens-with-MultiSig)
+
 ## Generate Key hashes and scripts
 
 **Each of the possible signers must generate a payment key**:
@@ -222,6 +224,8 @@ Number of UTXOs: 1
 
 Now we execute the "build-raw" command:
 
+NOTE: If you would send Native Tokens than read [How to send Native Tokens with MultiSig](#How-to-send-Native-Tokens-with-MultiSig)
+
 ```bash
 # On Hot Environment - Bob
 cardano-cli transaction build-raw \
@@ -243,14 +247,15 @@ fee=$(cardano-cli transaction calculate-min-fee \
     --tx-in-count ${txcnt} \
     --tx-out-count 2 \
     --testnet-magic 1097911063 \
-    --witness-count 1 \
-    --byron-witness-count 0 \
+    --witness-count 2 \
     --protocol-params-file params.json | awk '{ print $1 }')
 echo fee: $fee
 
 # Output example
 fee: 175665
 ```
+
+Note: Set --witness-count to the number of witnesses. If you have defined 3 in the MultiSig script and set the min. witnesses to 2, set --witness-count to `--witness-count 2`.
 
 We calculate the change output:
 
@@ -378,3 +383,35 @@ cardano-cli query utxo \
 ```
 
 It may take a moment until the transaction is displayed.
+
+## How to send Native Tokens with MultiSig
+
+To send Native Tokens, only the command `cardano-cli transaction build-raw` must be revised.
+
+```bash
+# On Hot environment
+
+cardano-cli transaction build-raw \
+    ${tx_in} \
+    --tx-out $(cat multisig.addr)+0 \
+    --tx-out ${destinationAddress}+${amountToSend}+"<AMOUNT_OF_TOKEN> <TOKEN_POLICYID>" \
+    --invalid-hereafter $(( ${currentSlot} + 10000)) \
+    --tx-in-script-file multisig.json \
+    --fee 0 \
+    --out-file tx.tmp
+```
+
+```bash
+# On Hot environment - after fee calculation
+
+cardano-cli transaction build-raw \
+    ${tx_in} \
+    --tx-out $(cat multisig.addr)+${txOut} \
+    --tx-out ${destinationAddress}+${amountToSend}+"<AMOUNT_OF_TOKEN> <TOKEN_POLICYID>" \
+    --invalid-hereafter $(( ${currentSlot} + 10000)) \
+    --tx-in-script-file multisig.json \
+    --fee ${fee} \
+    --out-file multisig.raw
+```
+
+Now confirm the transaction as usual and send it.
