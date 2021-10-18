@@ -425,7 +425,7 @@ Number of UTXOs: 1
 
 Now we execute the "build-raw" command:
 
-**NOTE: If you want to send Native Tokens, please note the different commands.** **[How to send Native Tokens](#How-to-send-Native-Tokens)**
+**NOTE: If you want to send Native Tokens, please watch the different build-raw command.** **[How to send Native Tokens](#How-to-send-Native-Tokens)**
 
 ```bash
 # On Hot environment
