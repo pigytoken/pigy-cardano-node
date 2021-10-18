@@ -35,6 +35,8 @@ How-to [Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-in
 
 [Troubleshooting](#Troubleshooting)
 
+[How to send Native Tokens](#How-to-send-Native-Tokens)
+
 ## How-to start
 
 Once you have prepared your Docker environment, we can now customize our Docker project.
