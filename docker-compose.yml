@@ -18,6 +18,8 @@ services:
     volumes:
       - ./node-db:/db
       - ./data:/opt/data
+      # - /etc/localtime:/etc/localtime:ro # if you have problems with time skew read troubleshooting
+      # - /etc/timezone:/etc/timezone:ro
     entrypoint: [
         'bash',
         '-c',
