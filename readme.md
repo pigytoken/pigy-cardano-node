@@ -659,6 +659,18 @@ Logs:
 docker-compose logs -f
 ```
 
+If you have problems with time (InvalidBlock .. ClockSkew)?
+
+Uncomment in docker-compose file:
+```
+- /etc/localtime:/etc/localtime:ro
+- /etc/timezone:/etc/timezone:ro
+```
+
+and re-build image.
+
+Run now on host `sudo ntpdate pool.ntp.org` an start the cointainer with docker-compose up -d
+
 
 *Credits goes to:*
 
