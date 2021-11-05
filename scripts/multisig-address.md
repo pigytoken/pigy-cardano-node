@@ -343,7 +343,7 @@ cardano-cli transaction witness \
 
 John must now send his signed file "Key3_multisig.witness" to Bob.
 
-Bob muss jetzt noch die ".witness" datein in den Container laden:
+Bob transfer the ".witness" files in to the container:
 
 ```bash
 # On host
