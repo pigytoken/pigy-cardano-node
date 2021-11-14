@@ -103,17 +103,17 @@ git pull
 git branch -a
 
 # Output example
-  1.30.1
+  1.31.0
 * main
   remotes/origin/main
 ```
 
-We now want to use the branch 1.30.1 for this we have to check it out depending on whether it is local or in the remote git the command differs slightly here.
+We now want to use the branch 1.31.0 for this we have to check it out depending on whether it is local or in the remote git the command differs slightly here.
 
 Local:
 
 ```bash
-git checkout 1.30.1
+git checkout 1.31.0
 ```
 
 Remote:
@@ -122,7 +122,7 @@ Remote:
 git checkout --track remotes/origin/main # example
 ```
 
-We are now in branch 1.30.1 and can start working on the Docker project.
+We are now in branch 1.31.0 and can start working on the Docker project.
 
 ### Customize project
 
@@ -161,7 +161,7 @@ docker ps
 
 # output
 CONTAINER ID   IMAGE                  COMMAND                  CREATED        STATUS          PORTS                    NAMES
-0f7ff791fabe   cardano-node:v1.30.1   "bash -c 'sleep 10 &…"   18 hours ago   Up 51 minutes   0.0.0.0:3001->3001/tcp   cardano-node-1.30.1
+0f7ff791fabe   cardano-node:v1.31.0   "bash -c 'sleep 10 &…"   18 hours ago   Up 51 minutes   0.0.0.0:3001->3001/tcp   cardano-node-1.31.0
 ```
 
 If you want to see the log you can do this with the following command:
@@ -216,8 +216,8 @@ Copy your "cardano-cli" Binarys to a USB Stick:
 Under WSL you must mount your USB Stick before.
 
 ```bash
-docker cp cardano-node-1.30.1:/usr/local/bin/cardano-cli /<PATH_TO_YOUR_USBSTICK-FOLDER>
-docker cp cardano-node-1.30.1:/usr/local/bin/mantra /<PATH_TO_YOUR_USBSTICK-FOLDER>
+docker cp cardano-node-1.31.0:/usr/local/bin/cardano-cli /<PATH_TO_YOUR_USBSTICK-FOLDER>
+docker cp cardano-node-1.31.0:/usr/local/bin/mantra /<PATH_TO_YOUR_USBSTICK-FOLDER>
 ```
 
 Create a folder for the cardano-cli and the mantra-tools on your air gapped machine and make it known to the system:
@@ -262,7 +262,7 @@ Check if your system finds the cardano-cli & mantra tools:
 cardano-cli --version
 
 # output
-cardano-cli 1.30.1 - linux-x86_64 - ghc-8.10
+cardano-cli 1.31.0 - linux-x86_64 - ghc-8.10
 git rev 0fb43f4e3da8b225f4f86557aed90a183981a64f
 
 mantra --version
@@ -312,14 +312,14 @@ cardano-cli address build \
 
 ```bash
 # On Host
-docker cp <PATH_TO_FOLDER>payment.addr cardano-node-1.30.1:/opt/data
+docker cp <PATH_TO_FOLDER>payment.addr cardano-node-1.31.0:/opt/data
 ```
 
 Now we continue working in the container. To do this, we log in to it:
 
 ```bash
 # On Host
-docker exec -it cardano-node-1.30.1 bash
+docker exec -it cardano-node-1.31.0 bash
 ```
 
 You can display your payment address with cat:
@@ -507,7 +507,7 @@ exit
 
 ```bash
 # On Host
-docker cp cardano-node-1.30.1:/opt/data/tx.raw /<PATH_TO_YOUR_USBSTICK-FOLDER>
+docker cp cardano-node-1.31.0:/opt/data/tx.raw /<PATH_TO_YOUR_USBSTICK-FOLDER>
 ```
 
 *If you under Windows and u use WSL you can open folder from Terminal with "explorer.exe ."*
@@ -528,7 +528,7 @@ cardano-cli transaction sign \
 
 ```bash
 # On Host
-docker cp <PATH_TO_FOLDER>/tx.signed cardano-node-1.30.1:/opt/data
+docker cp <PATH_TO_FOLDER>/tx.signed cardano-node-1.31.0:/opt/data
 ```
 
 Now you can send your signed transaction:
