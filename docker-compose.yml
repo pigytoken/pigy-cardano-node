@@ -4,16 +4,16 @@ services:
   cardano-node:
     build:
       context: .
-    container_name: cardano-node-1.31.0
-    image: cardano-node:v1.31.0
+    container_name: cardano-node-1.32.1
+    image: cardano-node:v1.32.1
     deploy:
       resources:
         limits:
-          memory: 8000M
+          memory: 16000M
     stdin_open: true
     tty: true
     environment:
-      - NETWORK=testnet
+      - NETWORK=mainnet
       - CARDANO_NODE_SOCKET_PATH=/db/node.socket
     volumes:
       - ./node-db:/db
@@ -24,12 +24,12 @@ services:
         'bash',
         '-c',
         "sleep 10 && cardano-node run \
-        --topology /etc/config/testnet-topology.json \
+        --topology /etc/config/mainnet-topology.json \
         --database-path /db \
         --socket-path /db/node.socket \
         --host-addr 0.0.0.0 \
         --port 3001 \
-        --config /etc/config/testnet-config.json",
+        --config /etc/config/mainnet-config.json",
       ]
     ports:
       - '3001:3001'
