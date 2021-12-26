@@ -1,7 +1,7 @@
 FROM ubuntu:20.04 as builder
 LABEL Maintainer="PIGYToken <support@pigytoken.com>" \
     Description="Cardano-node" \
-    version="1.2.0"
+    version="1.2.1"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -13,10 +13,10 @@ RUN apt-get update \
 # GHC install
 WORKDIR /build/ghc
 
-RUN curl https://downloads.haskell.org/~ghc/8.10.4/ghc-8.10.4-x86_64-deb10-linux.tar.xz | \
+RUN curl https://downloads.haskell.org/~ghc/8.10.7/ghc-8.10.7-x86_64-deb10-linux.tar.xz | \
     tar -Jx -C /build/ghc
 
-RUN cd ghc-8.10.4 && ./configure && make install
+RUN cd ghc-8.10.7 && ./configure && make install
 
 # Libsodium install
 WORKDIR /build/libsodium
@@ -35,9 +35,9 @@ RUN cabal update
 
 # Building Cardano-node
 WORKDIR /build/cardano-node
-RUN git clone --branch 1.31.0 https://github.com/input-output-hk/cardano-node.git && \
+RUN git clone --branch 1.32.1 https://github.com/input-output-hk/cardano-node.git && \
     cd cardano-node && \
-    cabal configure --with-compiler=ghc-8.10.4 && \
+    cabal configure --with-compiler=ghc-8.10.7 && \
     cabal build all
 
 # Building Mantra-tools
@@ -64,8 +64,8 @@ COPY config/chrony.conf /etc/chrony/chrony.conf
 COPY config/mainnet /etc/config
 COPY config/testnet /etc/config
 
-COPY --from=builder /build/cardano-node/cardano-node/dist-newstyle/build/x86_64-linux/ghc-8.10.4/cardano-node-1.31.0/x/cardano-node/build/cardano-node/cardano-node /usr/local/bin/
-COPY --from=builder /build/cardano-node/cardano-node/dist-newstyle/build/x86_64-linux/ghc-8.10.4/cardano-cli-1.31.0/x/cardano-cli/build/cardano-cli/cardano-cli /usr/local/bin/
+COPY --from=builder /build/cardano-node/cardano-node/dist-newstyle/build/x86_64-linux/ghc-8.10.7/cardano-node-1.32.1/x/cardano-node/build/cardano-node/cardano-node /usr/local/bin/
+COPY --from=builder /build/cardano-node/cardano-node/dist-newstyle/build/x86_64-linux/ghc-8.10.7/cardano-cli-1.32.1/x/cardano-cli/build/cardano-cli/cardano-cli /usr/local/bin/
 COPY --from=builder /root/.cabal/bin/mantra /usr/local/bin/
 
 EXPOSE 123/udp
