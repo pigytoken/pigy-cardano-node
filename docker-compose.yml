@@ -4,8 +4,8 @@ services:
   cardano-node:
     build:
       context: .
-    container_name: cardano-node-1.33.0
-    image: cardano-node:v1.33.0
+    container_name: cardano-node-1.31.0
+    image: cardano-node:v1.31.0
     deploy:
       resources:
         limits:
