@@ -4,12 +4,12 @@ services:
   cardano-node:
     build:
       context: .
-    container_name: cardano-node-1.32.1
-    image: cardano-node:v1.32.1
+    container_name: cardano-node-1.33.0
+    image: cardano-node:v1.33.0
     deploy:
       resources:
         limits:
-          memory: 16000M
+          memory: 8000M
     stdin_open: true
     tty: true
     environment:
@@ -18,8 +18,8 @@ services:
     volumes:
       - ./node-db:/db
       - ./data:/opt/data
-      # - /etc/localtime:/etc/localtime:ro # if you have problems with time skew read troubleshooting
-      # - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro # if you have problems with time skew read troubleshooting
+      - /etc/timezone:/etc/timezone:ro
     entrypoint: [
         'bash',
         '-c',
