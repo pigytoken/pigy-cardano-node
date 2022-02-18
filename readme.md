@@ -83,7 +83,7 @@ cd /srv/docker/cardano-node-<VERSION>
 ```
 
 ```bash
-git clone https://github.com/pigytoken/ss-cardano-node.git .
+git clone https://github.com/pigytoken/pigy-cardano-node.git .
 ```
 
 Now check which branch you are currently in:
